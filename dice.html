@@ -8,6 +8,34 @@
 				document.getElementById("dice1-text").textContent=randomdice1;
 				document.getElementById("dice2-text").textContent=randomdice2;
 			}
+			function setOnClick(table) {
+				for (var i = 0; i < table.rows.length; i++) {
+					for (var j = 0; j < table.rows[i].cells.length; j++)
+						table.rows[i].cells[j].onclick = function () {
+						if (this.classList.contains("on")) {
+							this.classList.remove("on");
+						} else {
+							this.classList.add("on");
+						}
+					};
+				}
+			}
+			function resetScore() {
+				var table1 = document.getElementById("scoreboard1");
+				var table2 = document.getElementById("scoreboard2");
+
+				for (var i = 0; i < table1.rows.length; i++) {
+					for (var j = 0; j < table1.rows[i].cells.length; j++) {
+						table1.rows[i].cells[j].classList.remove("on");
+					}
+				}
+
+				for (var i = 0; i < table2.rows.length; i++) {
+					for (var j = 0; j < table2.rows[i].cells.length; j++) {
+						table2.rows[i].cells[j].classList.remove("on");
+					}
+				}
+			}
 		</script>
 		<style>
 			.dice {
@@ -20,6 +48,10 @@
 			#button {
 				padding: 15px;
 				font-size: 20px;
+			}
+			#resetButton {
+				padding: 15px;
+				font-size: 15px;
 			}
 			#scoreboard {
 				margin-top: 50px;
@@ -110,21 +142,11 @@
 						</tr>
 					</table>
 				</div>
+				<br />
+				<input id="resetButton" type="button" value="Reset Scoreboard" onClick="resetScore()" />
 			</div>
 		</center>
 		<script>
-			function setOnClick(table) {
-				for (var i = 0; i < table.rows.length; i++) {
-					for (var j = 0; j < table.rows[i].cells.length; j++)
-					table.rows[i].cells[j].onclick = function () {
-						if (this.classList.contains("on")) {
-							this.classList.remove("on");
-						} else {
-							this.classList.add("on");
-						}
-					};
-				}
-			}
 			setOnClick(document.getElementById("scoreboard1"));
 			setOnClick(document.getElementById("scoreboard2"));
 		</script>
