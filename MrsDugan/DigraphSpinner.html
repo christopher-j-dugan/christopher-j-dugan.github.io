@@ -5,17 +5,25 @@
 		<script>
 		</script>
 		<style>
+			@font-face {
+				font-family: 'Comic Sans MS';
+				src: url("fonts/comici.ttf");
+			}
+
 			.spinner {
 				border: 2px solid black;
+				height: 200px;
 				overflow: hidden;
-				height: 180px;
-				font-size: 120px;
 				display: inline-block;
-				text-align: left;
 				margin: 10px;
-				font-family: "Comic Sans MS", "Comic Sans";
-				padding-left: 10px;
-				padding-right: 10px;
+				padding: 10px;
+			}
+
+			.spinner div {
+				height: 200px;
+				font-size: 130px;
+				font-family: "Comic Sans MS";
+				text-align: left;
 			}
 
 			#button {
@@ -45,6 +53,7 @@
 					<div>ot</div>
 					<div>ap</div>
 				</div>
+				<br />
 				<br />
 				<input id="button" type="button" value="Spin to make a word!" onClick="spin()" />
 			</div>
