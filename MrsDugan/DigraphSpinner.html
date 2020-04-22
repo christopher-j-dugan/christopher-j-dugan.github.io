@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="js/slotmachine.min.js"></script>
+		<script>
+		</script>
+		<style>
+			.spinner {
+				border: 2px solid black;
+				overflow: hidden;
+				height: 180px;
+				font-size: 120px;
+				display: inline-block;
+				text-align: left;
+				margin: 10px;
+				font-family: "Comic Sans MS", "Comic Sans", cursive;
+				padding-left: 10px;
+				padding-right: 10px;
+			}
+
+			#button {
+				padding: 15px;
+				font-size: 20px;
+			}
+		</style>
+	</head>
+	<body>
+		<center>
+			<div id="main" style="margin-top:20px;padding:50px;">
+				<div id="spinner1" class="spinner">
+					<div>ch</div>
+					<div>sh</div>
+					<div>th</div>
+					<div>ch</div>
+					<div>sh</div>
+					<div>th</div>
+				</div>
+				<div id="spinner2" class="spinner">
+					<div>in</div>
+					<div>ip</div>
+					<div>ot</div>
+					<div>ap</div>
+					<div>in</div>
+					<div>ip</div>
+					<div>ot</div>
+					<div>ap</div>
+				</div>
+				<br />
+				<input id="button" type="button" value="Spin to make a word!" onClick="spin()" />
+			</div>
+		</center>
+		<script>
+			const numSpins = 8;
+			const spinner1 = document.getElementById('spinner1');
+			const spinner2 = document.getElementById('spinner2');
+
+			var options1 = {
+				delay: 400,
+				randomize() {
+					return Math.ceil(Math.random() * 8);
+				}
+			};
+
+			var options2 = {
+				delay: 400,
+				randomize() {
+					return Math.ceil(Math.random() * 8);
+				}
+			};
+
+			const spinner1Machine = new  SlotMachine(spinner1, options1);
+			const spinner2Machine = new  SlotMachine(spinner2, options2);
+
+			function spin() {
+				spinner1Machine.shuffle();
+				spinner2Machine.shuffle();
+			}
+		</script>
+	</body>
+</html>
