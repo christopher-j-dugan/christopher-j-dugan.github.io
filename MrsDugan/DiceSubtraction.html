@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script type="text/javascript" src="../js/jquery-3.5.0.min.js"></script>
+		<script>
+			function throwdice(){
+				var randomdice1=Math.round(Math.random()*6);
+				var randomdice2=Math.round(Math.random()*6);
+
+				$('.diceValue').fadeOut({
+					duration: 500,
+					complete: function() {
+						document.getElementById("dice1-text").textContent=randomdice1;
+						document.getElementById("dice2-text").textContent=randomdice2;
+						$('.diceValue').fadeIn({
+							duration: 500	
+						});
+					}
+				});
+			}
+			function setClickHandler(table) {
+				for (var i = 0; i < table.rows.length; i++) {
+					for (var j = 0; j < table.rows[i].cells.length; j++)
+						table.rows[i].cells[j].onclick = function () {
+						if (this.classList.contains("on")) {
+							this.classList.remove("on");
+						} else {
+							this.classList.add("on");
+						}
+					};
+				}
+			}
+			function resetScore() {
+				var table1 = document.getElementById("scoreboard1");
+				var table2 = document.getElementById("scoreboard2");
+
+				for (var i = 0; i < table1.rows.length; i++) {
+					for (var j = 0; j < table1.rows[i].cells.length; j++) {
+						table1.rows[i].cells[j].classList.remove("on");
+					}
+				}
+
+				for (var i = 0; i < table2.rows.length; i++) {
+					for (var j = 0; j < table2.rows[i].cells.length; j++) {
+						table2.rows[i].cells[j].classList.remove("on");
+					}
+				}
+			}
+		</script>
+		<style>
+			.dice {
+				border: 2px solid black;
+				padding: 40px;
+				margin: 10px;
+				font-size: 50px;
+				font-weight: bold;
+			}
+			#button {
+				padding: 10px;
+				font-size: 18px;
+			}
+			#resetButton {
+				padding: 15px;
+				font-size: 15px;
+			}
+			#scoreboard {
+				margin-top: 50px;
+			}
+			.scoreboard {
+				display: inline-block;
+			}
+			.scoreboard td {
+				border: 2px solid black;
+				padding: 25px;
+			}
+			.scoreboard th {
+				font-size: 20px;
+			}
+			#scoreboard1 td.on {
+				background-color: green;
+			}
+			#scoreboard2 td.on {
+				background-color: blue;
+			}
+		</style>
+	</head>
+	<body>
+		<center>
+			<div id="main" style="margin-top:20px;padding:50px;">
+				<div>
+					<span  class="dice"><span id="dice1-text" class="diceValue">0</span></span>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<span class="dice"><span id="dice2-text" class="diceValue">0</span></span>
+				</div>
+				<br />
+				<br />
+				<br />
+				<br />
+				<input id="button" type="button" value="Roll dice!" onClick="throwdice()" />
+				<br />
+				<img src="images/numberLine.gif" height="100px"/>
+				<div id="scoreboard">
+					<table id="scoreboard1" class="scoreboard">
+						<tr>
+							<th colspan="2">Player 1</th>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+						</tr>
+					</table>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<table id="scoreboard2" class="scoreboard">
+						<tr>
+							<th colspan="2">Player 2</th>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+						</tr>
+					</table>
+				</div>
+				<br />
+				<input id="resetButton" type="button" value="Reset Scoreboard" onClick="resetScore()" />
+			</div>
+		</center>
+		<script>
+			setClickHandler(document.getElementById("scoreboard1"));
+			setClickHandler(document.getElementById("scoreboard2"));
+		</script>
+	</body>
+</html>
