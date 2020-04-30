@@ -4,11 +4,13 @@
 		<script src="../js/jquery-3.5.0.min.js"></script>
 		<script src="../js/jquery-ui-1.12.1/jquery-ui.min.js"></script>
 		<script src="js/jquery-ui-slider-pips.js"></script>
-		<script src="js/jquery-ui-touch-punch.min.js"></script>
 		<link rel="stylesheet" href="css/jquery-ui-slider-pips.css" />
 		<link rel="stylesheet" href="../js/jquery-ui-themes-1.12.1/themes/flick/jquery-ui.css" />
 		<link rel="stylesheet" href="../js/jquery-ui-themes-1.12.1/themes/flick/theme.css" />
 		<style>
+			#dice1 {
+				margin-top: 30px;
+			}
 			#rollButton {
 				padding: 15px;
 				font-size: 20px;
@@ -24,10 +26,13 @@
 				height: 80px;
 				padding: 20px;
 			}
+			.ui-slider-handle {
+				cursor: move !important;
+			}
 			#player1 .ui-slider-handle {
 				background: url('images/blue-car.png') no-repeat 0px 5px !important;
-				height: 70px !important;
-				width: 70px !important;
+				height: 50px !important;
+				width: 80px !important;
 				background-size: contain !important;
 				margin-left: -40px !important;
 				border: 0 !important;
@@ -35,8 +40,8 @@
 			}
 			#player2 .ui-slider-handle {
 				background: url('images/green-car.png') no-repeat 0px 5px !important;
-				height: 70px !important;
-				width: 70px !important;
+				height: 80px !important;
+				width: 80px !important;
 				background-size: contain !important;
 				margin-left: -40px !important;
 				border: 0 !important;
@@ -44,8 +49,8 @@
 			}
 			#player3 .ui-slider-handle {
 				background: url('images/yellow-car.png') no-repeat 0px 5px !important;
-				height: 70px !important;
-				width: 70px !important;
+				height: 80px !important;
+				width: 80px !important;
 				background-size: contain !important;
 				margin-left: -40px !important;
 				border: 0 !important;
@@ -56,17 +61,26 @@
 			}
 			.ui-slider-pips .ui-slider-pip {
 				top: 50px;
+				font-size: 1.2em !important;
+				color: black !important;
+				line-height: 1.3em !important;
 			}
 			.ui-slider-pips .ui-slider-pip-first {
 				top: 50px;
 			}
 			.ui-slider-pips [class*=ui-slider-pip-initial] {
-				color: #999;
+				color: black;
 				font-weight: normal;
 			}
 			.ui-slider-pips [class*=ui-slider-pip-selected] {
 				color: #FF7A00 !important;
 				font-weight: bold !important;
+			}
+			.ui-slider-pips .ui-slider-line {
+				background: black;
+				height: 5px;
+				width: 2px;
+				left: 49%;
 			}
 			.dice {
 				width: 136px;
@@ -118,7 +132,6 @@
 			<br />
 			<br />
 			<br />
-			<br />
 			<div class="track">
 				<div id="player1" class="slider"></div>
 			</div>
@@ -126,11 +139,9 @@
 			<br />
 			<br />
 			<br />
-			<br />
 			<div class="track">
 				<div id="player2" class="slider"></div>
 			</div>
-			<br />
 			<br />
 			<br />
 			<br />
