@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="../js/jquery-3.5.0.min.js"></script>
+		<script src="../js/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+		<script src="js/jquery-ui-slider-pips.js"></script>
+		<script src="js/jquery-ui-touch-punch.min.js"></script>
+		<link rel="stylesheet" href="css/jquery-ui-slider-pips.css" />
+		<link rel="stylesheet" href="../js/jquery-ui-themes-1.12.1/themes/flick/jquery-ui.css" />
+		<link rel="stylesheet" href="../js/jquery-ui-themes-1.12.1/themes/flick/theme.css" />
+		<style>
+			#rollButton {
+				padding: 15px;
+				font-size: 20px;
+				width: 136px;
+			}
+			.slider {
+				position: relative;
+				width: 800px;
+			}
+			.track {
+				border: solid black 1px;
+				width: 900px;
+				height: 80px;
+				padding: 20px;
+			}
+			#player1 .ui-slider-handle {
+				background: url('images/blue-car.png') no-repeat 0px 5px !important;
+				height: 70px !important;
+				width: 70px !important;
+				background-size: contain !important;
+				margin-left: -40px !important;
+				border: 0 !important;
+				outline: 0px solid transparent !important;
+			}
+			#player2 .ui-slider-handle {
+				background: url('images/green-car.png') no-repeat 0px 5px !important;
+				height: 70px !important;
+				width: 70px !important;
+				background-size: contain !important;
+				margin-left: -40px !important;
+				border: 0 !important;
+				outline: 0px solid transparent !important;
+			}
+			#player3 .ui-slider-handle {
+				background: url('images/yellow-car.png') no-repeat 0px 5px !important;
+				height: 70px !important;
+				width: 70px !important;
+				background-size: contain !important;
+				margin-left: -40px !important;
+				border: 0 !important;
+				outline: 0px solid transparent !important;
+			}
+			.ui-widget-content, .ui-state-focus {
+				border: 0 !important;
+			}
+			.ui-slider-pips .ui-slider-pip {
+				top: 50px;
+			}
+			.ui-slider-pips .ui-slider-pip-first {
+				top: 50px;
+			}
+			.ui-slider-pips [class*=ui-slider-pip-initial] {
+				color: #999;
+				font-weight: normal;
+			}
+			.ui-slider-pips [class*=ui-slider-pip-selected] {
+				color: #FF7A00 !important;
+				font-weight: bold !important;
+			}
+			.dice {
+				width: 136px;
+				height: 136px;
+			}
+			.spinning {
+				filter: blur(5px);
+				-webkit-filter: blur(5px);
+			}
+			.dice-1 {
+				background: url('images/dice-background.jpg') no-repeat -48px -40px;
+				width: 136px;
+				height: 136px;
+			}
+			.dice-2 {
+				background: url('images/dice-background.jpg') no-repeat -240px -40px;
+				width: 136px;
+				height: 136px;
+			}
+			.dice-3 {
+				background: url('images/dice-background.jpg') no-repeat -432px -40px;
+				width: 136px;
+				height: 136px;
+			}
+			.dice-4 {
+				background: url('images/dice-background.jpg') no-repeat -48px -232px;
+				width: 136px;
+				height: 136px;
+			}
+			.dice-5 {
+				background: url('images/dice-background.jpg') no-repeat -240px -232px; 
+				width: 136px;
+				height: 136px;
+			}
+			.dice-6 {
+				background: url('images/dice-background.jpg') no-repeat -432px -232px; 
+				width: 136px;
+				height: 136px;
+			}
+		</style>
+	</head>
+	<body>
+		<center>
+			<div id="dice1" class="dice dice-1">&nbsp;</div>
+			<br />
+			<button id="rollButton">Roll Dice!</button>
+			<br />
+			<br />
+			<br />
+			<br />
+			<br />
+			<br />
+			<div class="track">
+				<div id="player1" class="slider"></div>
+			</div>
+			<br />
+			<br />
+			<br />
+			<br />
+			<br />
+			<div class="track">
+				<div id="player2" class="slider"></div>
+			</div>
+			<br />
+			<br />
+			<br />
+			<br />
+			<br />
+			<div class="track">
+				<div id="player3" class="slider"></div>
+			</div>
+		</center>
+
+
+
+		<script>
+			var rolling = false;
+
+			function rollDice($dice) {
+				var roll = Math.floor(Math.random()*6) + 1;			
+				$dice.removeClass('dice-1 dice-2 dice-3 dice-4 dice-5 dice-6');
+				$dice.addClass('dice-' + roll);
+			}
+
+			$('#rollButton').click(function() {
+				if (rolling) {
+					return;
+				}
+
+				rolling = true;
+				var numRolls = Math.floor(Math.random()*5) + 1 + 5;			
+				var counter = 0;
+				$dice = $('#dice1');
+
+				$dice.addClass('spinning');
+
+				// fade it or something
+				var interval = setInterval(function() {
+					counter++;
+					rollDice($dice);	
+					if(counter == numRolls) {
+						clearInterval(interval);
+						$dice.removeClass('spinning');
+						rolling = false;
+					}
+				}, 300);
+			});
+
+			//$('.slider').append('<div class="handle" class="ui-slider-handle"></div>');
+
+			$('.slider').slider({
+				max: 10
+			}).slider('pips', {
+				rest: 'label',
+			});
+
+
+
+		</script>
+	</body>
+</html>
