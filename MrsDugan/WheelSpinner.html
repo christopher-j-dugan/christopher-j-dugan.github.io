@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="../js/jquery-3.5.0.min.js"></script>
+		<script src="../js/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+		<script src="js/jquery-ui-slider-pips.js"></script>
+		<script src="js/jquery-ui-touch-punch.min.js"></script>
+		<link rel="stylesheet" href="css/jquery-ui-slider-pips.css" />
+		<link rel="stylesheet" href="../js/jquery-ui-themes-1.12.1/themes/flick/jquery-ui.css" />
+		<link rel="stylesheet" href="../js/jquery-ui-themes-1.12.1/themes/flick/theme.css" />
+		<style>
+			#dice1 {
+				margin-top: 30px;
+			}
+			#rollButton {
+				padding: 15px;
+				font-size: 20px;
+				width: 136px;
+			}
+			.slider {
+				position: relative;
+                width: 900px;
+                height: 80px;
+			}
+            .track-wrapper {
+                width: 945px;
+                height: 80px;
+                border: solid black 1px;
+            }
+            .track {
+                width: 900px;
+                  background:
+                    linear-gradient(black,black) calc(1*100%/20/2),
+                    linear-gradient(black,black) calc(3*100%/20/2),
+                    linear-gradient(black,black) calc(5*100%/20/2),
+                    linear-gradient(black,black) calc(7*100%/20/2),
+                    linear-gradient(black,black) calc(9*100%/20/2),
+                    linear-gradient(black,black) calc(11*100%/20/2),
+                    linear-gradient(black,black) calc(13*100%/20/2),
+                    linear-gradient(black,black) calc(15*100%/20/2),
+                    linear-gradient(black,black) calc(17*100%/20/2),
+                    linear-gradient(black,black) calc(19*100%/20/2),
+                    linear-gradient(black,black) calc(21*100%/20/2),
+                    linear-gradient(black,black) calc(23*100%/20/2),
+                    linear-gradient(black,black) calc(25*100%/20/2),
+                    linear-gradient(black,black) calc(27*100%/20/2),
+                    linear-gradient(black,black) calc(29*100%/20/2),
+                    linear-gradient(black,black) calc(31*100%/20/2),
+                    linear-gradient(black,black) calc(33*100%/20/2),
+                    linear-gradient(black,black) calc(35*100%/20/2),
+                    linear-gradient(black,black) calc(37*100%/20/2),
+                    linear-gradient(black,black) calc(39*100%/20/2);
+                background-size:1px 100%; /* Control the width here*/
+                background-repeat:no-repeat;
+            }
+			.ui-widget-content, .ui-state-focus {
+				border: 0 !important;
+                background: none !important;
+                color: none !important;
+			}
+            #custom-handle {
+                font-size: 1em;
+                color: black !important;
+                background-color: red !important;
+                border-radius: 20px;
+                border: solid black 1px;
+                height: 40px;
+                width: 30px;
+                text-align: center;
+                color: #FFF;
+                background: none;
+                line-height: 40px;
+                top: 18px;
+                margin-left: -15px;
+                cursor: grab;
+            }
+            .ui-slider-label {
+                transform: rotate(-90deg);
+                top: -15px !important;
+            }
+            .ui-slider-horizontal.ui-slider-pips {
+                margin-bottom: 0px !important;
+            }
+
+			.ui-slider-pips .ui-slider-pip {
+				top: 50px;
+				font-size: 1em !important;
+				color: black !important;
+				line-height: 1.3em !important;
+			}
+			.ui-slider-pips .ui-slider-pip-first {
+				top: 50px;
+			}
+			.ui-slider-pips [class*=ui-slider-pip-initial] {
+				color: black;
+				font-weight: normal;
+			}
+			.ui-slider-pips [class*=ui-slider-pip-selected] {
+				color: #FF7A00 !important;
+			}
+			.ui-slider-pips .ui-slider-line {
+				background: black;
+				height: 0px;
+				width: 2px;
+				left: 49%;
+			}
+            
+            #color-picker {
+                width: 100px;
+            }
+            #color-picker div {
+                margin-top: 5px;
+                width: 100%;
+                height: 20px;
+                border: solid black 1px;
+                cursor: pointer;
+            }
+
+            #wheelOfFortune {
+              display: inline-block;
+              position: relative;
+              overflow: hidden;
+            }
+
+            #wheel {
+              display: block;
+            }
+
+            #spin {
+              font: 1.5em/0 sans-serif;
+              user-select: none;
+              cursor: pointer;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              width: 30%;
+              height: 30%;
+              margin: -15%;
+              background: #fff;
+              color: #fff;
+              box-shadow: 0 0 0 8px currentColor, 0 0px 15px 5px rgba(0, 0, 0, 0.6);
+              border-radius: 50%;
+              transition: 0.8s;
+            }
+
+            #spin::after {
+              content: "";
+              position: absolute;
+              top: -17px;
+              border: 10px solid transparent;
+              border-bottom-color: currentColor;
+              border-top: none;
+            }
+		</style>
+	</head>
+	<body>
+            <br />
+            <br />
+		<center>
+            <div id="wheelOfFortune">
+              <canvas id="wheel" width="300" height="300"></canvas>
+              <div id="spin">SPIN</div>
+            </div>
+            <br />
+            <br />
+            <div class="track-wrapper">
+                <div class="track">
+                    <div id="player1" class="slider">
+                        <div id="custom-handle" class="ui-slider-handle"></div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <br />
+            <p>Pick the color of your token:</p>
+            <div id="color-picker">
+                <div id="red-picker" style="background-color: red"></div>
+                <div id="orange-picker" style="background-color: orange"></div>
+                <div id="yellow-picker" style="background-color: yellow"></div>
+                <div id="green-picker" style="background-color: green"></div>
+                <div id="blue-picker" style="background-color: blue"></div>
+                <div id="purple-picker" style="background-color: purple"></div>
+            </div>
+		</center>
+
+
+		<script>
+            $('#color-picker div').click(function() {
+                $('#custom-handle')[0].style.setProperty('background-color', $(this).css('background-color'), 'important');
+            });
+
+			$('.slider').slider({
+				max: 20
+			}).slider('pips', {
+                labels: {
+                    first: "Start",
+                    last: "Finish!"
+                },
+                rest: false
+			});
+
+            const sectors = [
+              {color:"#f82", label:"0"},
+              {color:"#0bf", label:"1"},
+              {color:"#fb0", label:"2"},
+              {color:"#0fb", label:"3"},
+              {color:"#b0f", label:"4"},
+              {color:"#f82", label:"5"},
+              {color:"#0bf", label:"6"},
+              {color:"#fb0", label:"7"},
+              {color:"#0fb", label:"8"},
+              {color:"#b0f", label:"9"},
+            ];
+
+            const rand = (m, M) => Math.random() * (M - m) + m;
+            const tot = sectors.length;
+            const EL_spin = document.querySelector("#spin");
+            const ctx = document.querySelector("#wheel").getContext('2d');
+            const dia = ctx.canvas.width;
+            const rad = dia / 2;
+            const PI = Math.PI;
+            const TAU = 2 * PI;
+            const arc = TAU / sectors.length;
+
+            const friction = 0.98; // 0.995=soft, 0.99=mid, 0.98=hard
+            let angVel = 0; // Angular velocity
+            let ang = 0; // Angle in radians
+
+            const getIndex = () => Math.floor(tot - ang / TAU * tot) % tot;
+
+            function drawSector(sector, i) {
+              const ang = arc * i;
+              ctx.save();
+              // COLOR
+              ctx.beginPath();
+              ctx.fillStyle = sector.color;
+              ctx.moveTo(rad, rad);
+              ctx.arc(rad, rad, rad, ang, ang + arc);
+              ctx.lineTo(rad, rad);
+              ctx.fill();
+              // TEXT
+              ctx.translate(rad, rad);
+              ctx.rotate(ang + arc / 2);
+              ctx.textAlign = "right";
+              ctx.fillStyle = "#fff";
+              ctx.font = "bold 30px sans-serif";
+              ctx.fillText(sector.label, rad - 10, 10);
+              //
+              ctx.restore();
+            };
+
+            function rotate() {
+              const sector = sectors[getIndex()];
+              ctx.canvas.style.transform = `rotate(${ang - PI / 2}rad)`;
+              EL_spin.textContent = !angVel ? "SPIN" : sector.label;
+              EL_spin.style.background = sector.color;
+            }
+
+            function frame() {
+              if (!angVel) return;
+              angVel *= friction; // Decrement velocity by friction
+              if (angVel < 0.002) angVel = 0; // Bring to stop
+              ang += angVel; // Update angle
+              ang %= TAU; // Normalize angle
+              rotate();
+            }
+
+            function engine() {
+              frame();
+              requestAnimationFrame(engine)
+            }
+
+            // INIT
+            sectors.forEach(drawSector);
+            rotate(); // Initial rotation
+            engine(); // Start engine
+            EL_spin.addEventListener("click", () => {
+              if (!angVel) angVel = rand(0.25, 0.35);
+            });
+		</script>
+	</body>
+</html>
