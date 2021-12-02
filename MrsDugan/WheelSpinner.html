@@ -21,14 +21,16 @@
 				position: relative;
                 width: 900px;
                 height: 80px;
+                padding-top: 35px;
 			}
             .track-wrapper {
                 width: 945px;
-                height: 80px;
+                height: 200px;
                 border: solid black 1px;
             }
             .track {
                 width: 900px;
+                height: 200px;
                   background:
                     linear-gradient(black,black) calc(1*100%/20/2),
                     linear-gradient(black,black) calc(3*100%/20/2),
@@ -58,10 +60,9 @@
                 background: none !important;
                 color: none !important;
 			}
-            #custom-handle {
+            .track .slider .ui-slider-handle {
                 font-size: 1em;
                 color: black !important;
-                background-color: red !important;
                 border-radius: 20px;
                 border: solid black 1px;
                 height: 40px;
@@ -74,6 +75,15 @@
                 margin-left: -15px;
                 cursor: grab;
             }
+
+            #player1 .ui-slider-handle {
+                background-color: red !important;
+            }
+
+            #player2 .ui-slider-handle {
+                background-color: blue !important;
+            }
+
             .ui-slider-label {
                 transform: rotate(-90deg);
                 top: -15px !important;
@@ -171,18 +181,10 @@
                     <div id="player1" class="slider">
                         <div id="custom-handle" class="ui-slider-handle"></div>
                     </div>
+                    <div id="player2" class="slider">
+                        <div id="custom-handle" class="ui-slider-handle"></div>
+                    </div>
                 </div>
-            </div>
-            <br />
-            <br />
-            <p>Pick the color of your token:</p>
-            <div id="color-picker">
-                <div id="red-picker" style="background-color: red"></div>
-                <div id="orange-picker" style="background-color: orange"></div>
-                <div id="yellow-picker" style="background-color: yellow"></div>
-                <div id="green-picker" style="background-color: green"></div>
-                <div id="blue-picker" style="background-color: blue"></div>
-                <div id="purple-picker" style="background-color: purple"></div>
             </div>
 		</center>
 
@@ -222,7 +224,7 @@
             const TAU = 2 * PI;
             const arc = TAU / sectors.length;
 
-            const friction = 0.98; // 0.995=soft, 0.99=mid, 0.98=hard
+            let friction = 0.98; // 0.995=soft, 0.99=mid, 0.98=hard
             let angVel = 0; // Angular velocity
             let ang = 0; // Angle in radians
 
@@ -270,11 +272,16 @@
               requestAnimationFrame(engine)
             }
 
+            function getRandomArbitrary(min, max) {
+              return Math.random() * (max - min) + min;
+            }
+
             // INIT
             sectors.forEach(drawSector);
             rotate(); // Initial rotation
             engine(); // Start engine
             EL_spin.addEventListener("click", () => {
+              friction = getRandomArbitrary(0.978, 0.985);
               if (!angVel) angVel = rand(0.25, 0.35);
             });
 		</script>
