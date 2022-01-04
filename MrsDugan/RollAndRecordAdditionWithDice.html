@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="../js/jquery-3.5.0.min.js"></script>
+		<style>
+			#rollButton {
+				margin-top: 10px;
+				padding: 15px;
+				font-size: 20px;
+				width: 136px;
+			}
+			#clearButton {
+				margin-top: 10px;
+				padding: 15px;
+				font-size: 20px;
+				width: 136px;
+			}
+			.dice {
+				display: inline-block;
+				margin-top: 30px;
+				width: 136px;
+				height: 136px;
+			}
+			#dice1 {
+				margin-right: 10px;
+			}
+			#dice12{
+				margin-left: 10px;
+			}
+			.spinning {
+				filter: blur(5px);
+				-webkit-filter: blur(5px);
+			}
+			.dice-1 {
+				background: url('images/dice-background.jpg') no-repeat -48px -40px;
+				width: 136px;
+				height: 136px;
+			}
+			.dice-2 {
+				background: url('images/dice-background.jpg') no-repeat -240px -40px;
+				width: 136px;
+				height: 136px;
+			}
+			.dice-3 {
+				background: url('images/dice-background.jpg') no-repeat -432px -40px;
+				width: 136px;
+				height: 136px;
+			}
+			.dice-4 {
+				background: url('images/dice-background.jpg') no-repeat -48px -232px;
+				width: 136px;
+				height: 136px;
+			}
+			.dice-5 {
+				background: url('images/dice-background.jpg') no-repeat -240px -232px; 
+				width: 136px;
+				height: 136px;
+			}
+			.dice-6 {
+				background: url('images/dice-background.jpg') no-repeat -432px -232px; 
+				width: 136px;
+				height: 136px;
+			}
+
+			.scorecard td {
+				width: 100px;
+				height: 50px;
+				border: solid black 1px;
+			}
+			.scorecard .header td {
+				font-weight: bold;
+				font-size: 40px;
+				text-align: center;
+			}
+			.scorecard .selectable .selected {
+				background-color: red;
+			}
+		</style>
+	</head>
+	<body>
+		<center>
+			<div>
+				<div id="dice1" class="dice dice-1"></div>
+				<div id="dice2" class="dice dice-1"></div>
+			</div>
+			<br />
+			<button id="rollButton">Roll Dice!</button>
+			<br />
+			<br />
+			<br />
+			<table class="scorecard">
+				<tr class="selectable">
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr class="selectable">
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr class="selectable">
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr class="selectable">
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr class="selectable">
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr class="selectable">
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr class="selectable">
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr class="selectable">
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr class="header">
+					<td>2</td>
+					<td>3</td>
+					<td>4</td>
+					<td>5</td>
+					<td>6</td>
+					<td>7</td>
+					<td>8</td>
+					<td>9</td>
+					<td>10</td>
+					<td>11</td>
+					<td>12</td>
+				</tr>
+			</table>
+			<button id="clearButton">Clear</button>
+		</center>
+
+		<script>
+			var rolling = false;
+
+			function rollDice($dice) {
+				const roll = Math.floor(Math.random()*6) + 1;			
+				$dice.removeClass('dice-1 dice-2 dice-3 dice-4 dice-5 dice-6');
+				$dice.addClass('dice-' + roll);
+			}
+
+			$('#rollButton').click(function() {
+				if (rolling) {
+					return;
+				}
+
+				rolling = true;
+
+				$('.dice').each(function() {
+					const numRolls = Math.floor(Math.random()*5) + 1 + 5;			
+					let counter = 0;
+				
+					const $dice = $(this);
+					$dice.addClass('spinning');
+
+					// There's a race condition here, but :thisisfine:
+					const interval = setInterval(function() {
+						counter++;
+						rollDice($dice);	
+						if(counter == numRolls) {
+							clearInterval(interval);
+							$dice.removeClass('spinning');
+							rolling = false; 
+						}
+					}, 300);
+				});
+			});
+
+			$('.selectable td').click(function() {
+				const $cell = $(this);
+				if ($cell.hasClass('selected')) {
+					$cell.removeClass('selected');
+				} else {
+					$cell.addClass('selected');
+				}
+			});
+
+			$('#clearButton').click(function() {
+				$('.selected').removeClass('selected');
+			});
+		</script>
+	</body>
+</html>
