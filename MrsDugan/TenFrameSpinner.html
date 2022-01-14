@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="../js/jquery-3.5.0.min.js"></script>
+		<script src="../js/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+		<script src="js/jquery-ui-slider-pips.js"></script>
+		<script src="js/jquery-ui-touch-punch.min.js"></script>
+		<link rel="stylesheet" href="../js/jquery-ui-themes-1.12.1/themes/flick/jquery-ui.css" />
+		<link rel="stylesheet" href="../js/jquery-ui-themes-1.12.1/themes/flick/theme.css" />
+		<style>
+            #wheelOfFortune {
+              display: inline-block;
+              position: relative;
+              overflow: hidden;
+            }
+
+            #wheel {
+              display: block;
+            }
+
+            #spin {
+              font: 1.5em/0 sans-serif;
+              user-select: none;
+              cursor: pointer;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              width: 30%;
+              height: 30%;
+              margin: -15%;
+              background: #fff;
+              color: #fff;
+              box-shadow: 0 0 0 8px currentColor, 0 0px 15px 5px rgba(0, 0, 0, 0.6);
+              border-radius: 50%;
+              transition: 0.8s;
+            }
+
+            #spin::after {
+              content: "";
+              position: absolute;
+              top: -17px;
+              border: 10px solid transparent;
+              border-bottom-color: currentColor;
+              border-top: none;
+            }
+			#button {
+				padding: 15px;
+				font-size: 20px;
+			}
+			#resetButton {
+				padding: 15px;
+				font-size: 15px;
+			}
+			#scoreboard {
+				margin-top: 50px;
+			}
+			.scoreboard {
+				display: inline-block;
+			}
+			.scoreboard td {
+				border: 2px solid black;
+                width: 40px;
+                height: 40px;
+                padding: 10px;
+                text-align: center;
+                cursor: pointer;
+			}
+			.scoreboard th {
+				font-size: 20px;
+			}
+			#scoreboard1 td.on {
+			}
+			#scoreboard2 td.on {
+			}
+            .scoreboard .on .token {
+                background-color: red;
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+            }
+            
+		</style>
+	</head>
+	<body>
+            <br />
+            <br />
+		<center>
+            <div id="wheelOfFortune">
+              <canvas id="wheel" width="300" height="300"></canvas>
+              <div id="spin">SPIN</div>
+            </div>
+            <br />
+				<div id="scoreboard">
+					<table id="scoreboard1" class="scoreboard" style="table-layout:fixed">
+						<tr>
+                            <td><div class="token"></div></td>
+							<td><div class="token"></div></td>
+							<td><div class="token"></div></td>
+							<td><div class="token"></div></td>
+							<td><div class="token"></div></td>
+						</tr>
+						<tr>
+							<td><div class="token"></div></td>
+							<td><div class="token"></div></td>
+							<td><div class="token"></div></td>
+							<td><div class="token"></div></td>
+							<td><div class="token"></div></td>
+						</tr>
+					</table>
+                    <br />
+                    <input id="autoFill" type="button" value="Fill Ten" onClick="fillTen()" />
+                    <br />
+                    <br />
+                    <br />
+					<table id="scoreboard2" class="scoreboard">
+						<tr>
+							<td><div class="token"></div></td>
+							<td><div class="token"></div></td>
+							<td><div class="token"></div></td>
+							<td><div class="token"></div></td>
+							<td><div class="token"></div></td>
+						</tr>
+						<tr>
+							<td><div class="token"></div></td>
+							<td><div class="token"></div></td>
+							<td><div class="token"></div></td>
+							<td><div class="token"></div></td>
+							<td><div class="token"></div></td>
+						</tr>
+					</table>
+				<br />
+				<input id="resetButton" type="button" value="Reset" onClick="resetScore()" />
+		</center>
+
+
+		<script>
+			function setOnClick(table) {
+				for (var i = 0; i < table.rows.length; i++) {
+					for (var j = 0; j < table.rows[i].cells.length; j++)
+						table.rows[i].cells[j].onclick = function () {
+						if (this.classList.contains("on")) {
+							this.classList.remove("on");
+						} else {
+							this.classList.add("on");
+						}
+					};
+				}
+			}
+
+			function fillTen() {
+				var table1 = document.getElementById("scoreboard1");
+
+				for (var i = 0; i < table1.rows.length; i++) {
+					for (var j = 0; j < table1.rows[i].cells.length; j++) {
+						table1.rows[i].cells[j].classList.add("on");
+					}
+				}
+			}
+			function resetScore() {
+				var table1 = document.getElementById("scoreboard1");
+				var table2 = document.getElementById("scoreboard2");
+
+				for (var i = 0; i < table1.rows.length; i++) {
+					for (var j = 0; j < table1.rows[i].cells.length; j++) {
+						table1.rows[i].cells[j].classList.remove("on");
+					}
+				}
+
+				for (var i = 0; i < table2.rows.length; i++) {
+					for (var j = 0; j < table2.rows[i].cells.length; j++) {
+						table2.rows[i].cells[j].classList.remove("on");
+					}
+				}
+			}
+            
+            const sectors = [
+              {color:"#f82", label:"1"},
+              {color:"#0bf", label:"2"},
+              {color:"#fb0", label:"3"},
+              {color:"#0fb", label:"4"},
+              {color:"#b0f", label:"5"},
+              {color:"#f82", label:"6"},
+              {color:"#0bf", label:"7"},
+              {color:"#fb0", label:"8"},
+              {color:"#0fb", label:"9"},
+              {color:"#b0f", label:"10"}
+            ];
+
+            const rand = (m, M) => Math.random() * (M - m) + m;
+            const tot = sectors.length;
+            const EL_spin = document.querySelector("#spin");
+            const ctx = document.querySelector("#wheel").getContext('2d');
+            const dia = ctx.canvas.width;
+            const rad = dia / 2;
+            const PI = Math.PI;
+            const TAU = 2 * PI;
+            const arc = TAU / sectors.length;
+
+            let friction = 0.98; // 0.995=soft, 0.99=mid, 0.98=hard
+            let angVel = 0; // Angular velocity
+            let ang = 0; // Angle in radians
+
+            const getIndex = () => Math.floor(tot - ang / TAU * tot) % tot;
+
+            function drawSector(sector, i) {
+              const ang = arc * i;
+              ctx.save();
+              // COLOR
+              ctx.beginPath();
+              ctx.fillStyle = sector.color;
+              ctx.moveTo(rad, rad);
+              ctx.arc(rad, rad, rad, ang, ang + arc);
+              ctx.lineTo(rad, rad);
+              ctx.fill();
+              // TEXT
+              ctx.translate(rad, rad);
+              ctx.rotate(ang + arc / 2);
+              ctx.textAlign = "right";
+              ctx.fillStyle = "#fff";
+              ctx.font = "bold 30px sans-serif";
+              ctx.fillText(sector.label, rad - 10, 10);
+              //
+              ctx.restore();
+            };
+
+            function rotate() {
+              const sector = sectors[getIndex()];
+              ctx.canvas.style.transform = `rotate(${ang - PI / 2}rad)`;
+              EL_spin.textContent = !angVel ? "SPIN" : sector.label;
+              EL_spin.style.background = sector.color;
+            }
+
+            function frame() {
+              if (!angVel) return;
+              angVel *= friction; // Decrement velocity by friction
+              if (angVel < 0.002) angVel = 0; // Bring to stop
+              ang += angVel; // Update angle
+              ang %= TAU; // Normalize angle
+              rotate();
+            }
+
+            function engine() {
+              frame();
+              requestAnimationFrame(engine)
+            }
+
+            function getRandomArbitrary(min, max) {
+              return Math.random() * (max - min) + min;
+            }
+
+            // INIT
+            sectors.forEach(drawSector);
+            rotate(); // Initial rotation
+            engine(); // Start engine
+            EL_spin.addEventListener("click", () => {
+              friction = getRandomArbitrary(0.978, 0.985);
+              if (!angVel) angVel = rand(0.25, 0.35);
+            });
+
+			setOnClick(document.getElementById("scoreboard1"));
+			setOnClick(document.getElementById("scoreboard2"));
+		</script>
+	</body>
+</html>
