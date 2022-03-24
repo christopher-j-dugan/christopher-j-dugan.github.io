@@ -37,7 +37,7 @@
 				height: 136px;
 			}
 			#dice1.dice-2 {
-				background: url('images/dice-background-plusminus.jpg') no-repeat -240px -40px;
+				background: url('images/dice-background-plusminus.jpg') no-repeat -48px -40px;
 				width: 136px;
 				height: 136px;
 			}
@@ -123,6 +123,7 @@
 			<br />
 			<br />
 			<br />
+            <div class="trainContainer">
 			<table class="scorecard">
 				<tr class="selectable">
 					<td></td>
@@ -145,7 +146,7 @@
 					<td></td>
 					<td></td>
 					<td></td>
-                    <td id="engine"></td>
+                    <td id="engine" class="unselectable"></td>
 				</tr>
 			</table>
 			<button id="clearButton">Clear</button>
@@ -153,12 +154,41 @@
 
 		<script>
 			var rolling = false;
+            var defaultCars = 10;
+            
+            function makeTrainLeave() {
+                let id = setInterval(animateTrack, 200);
+
+                function animateTrack() {
+                    var numSelected = $('.selectable .selected').length;
+                    if (numSelected == 0) {
+                        clearInterval(id);
+                        $('.selectable td:last').addClass('unselectable').attr('id', 'engine');
+                        clearTrack();
+                        setClickAction();
+                    } else {
+                        $('.selectable td:last').remove();
+                        $('.selectable').prepend('<td></td>');
+                    }
+                }
+            }
+
+
+            function clearTrack() {
+				$('.selected').removeClass('selected');
+                $('.selectable td').each(function(i) {
+                    if(i < defaultCars) {
+                        $(this).addClass('selected');
+                    }
+                });
+            }
 
 			function rollDice($dice) {
 				const roll = Math.floor(Math.random()*6) + 1;			
 				$dice.removeClass('dice-1 dice-2 dice-3 dice-4 dice-5 dice-6');
 				$dice.addClass('dice-' + roll);
 			}
+
 
 			$('#rollButton').click(function() {
 				if (rolling) {
@@ -187,17 +217,31 @@
 				});
 			});
 
-			$('.selectable td').click(function() {
-				const $cell = $(this);
-				if ($cell.hasClass('selected')) {
-					$cell.removeClass('selected');
-				} else {
-					$cell.addClass('selected');
-				}
-			});
+            function setClickAction() {
+                $('.selectable td').not('.unselectable').click(function() {
+                    const $cell = $(this);
+                    if ($cell.hasClass('selected')) {
+                        $cell.removeClass('selected');
+                    } else {
+                        $cell.addClass('selected');
+                    }
+
+                    var numSelected = $('.selected').length;
+                    var totalCars = $('.selectable td').not('.unselectable').length;
+                    console.log(numSelected + '/' + totalCars);
+                    if (numSelected == totalCars) {
+                      const audio = new Audio("audio/train-whistle.wav");
+                      audio.play();
+                      setTimeout(makeTrainLeave, 500);
+                    }
+                });
+            }
+
+            clearTrack();
+            setClickAction();
 
 			$('#clearButton').click(function() {
-				$('.selected').removeClass('selected');
+                clearTrack();
 			});
 		</script>
 	</body>
