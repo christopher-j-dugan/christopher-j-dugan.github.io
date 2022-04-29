@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
 	<head>
+        <script src="../js/jquery-3.5.0.min.js"></script>
+        <script src="../js/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+        <link rel="stylesheet" href="../js/jquery-ui-themes-1.12.1/jquery-ui.min.css">
 		<script>
 			function throwdice(){
 				var randomdice1=Math.round(Math.random()*2)+1;
@@ -72,9 +75,31 @@
 			#scoreboard2 td.on {
 				background-color: blue;
 			}
+            #directions {
+                position: absolute;
+                top: 10;
+                left: 10;
+            }
+            #directions, #directions:visited {
+                color: blue;
+            }
+            #directions:hover {
+                text-decoration: underline;
+                cursor: pointer;
+            }
 		</style>
 	</head>
 	<body>
+        <a id="directions">Directions</a>
+        <div id="instructions" title="Instructions">
+            <ol>
+                <li>Player 1 clicks the button to roll the dice.</li>
+                <li>Add the 2 numbers and click that many squares to add it to the ten frame.</li>
+                <li>Player 2 repeats steps 1 and 2.</li>
+                <li>Keep rolling until one person fills their 10-frame. <b>You must fill it exactly.</b> First to fill their ten-frame wins!</li>
+                <li>Click reset scoreboard and play again!</li>
+            </ol>
+        </div>
 		<center>
 			<div id="main" style="margin-top:20px;padding:50px;">
 				<div>
@@ -147,8 +172,19 @@
 			</div>
 		</center>
 		<script>
+            $('#instructions').dialog({
+                autoOpen: false,
+                modal: true,
+                open: function(event, ui) {
+                    $('.ui-widget-overlay').css({ opacity: '.8' });
+                }
+            });
+            $( "#directions" ).on( "click", function() {
+              $( "#instructions" ).dialog( "open" );
+            });
 			setOnClick(document.getElementById("scoreboard1"));
 			setOnClick(document.getElementById("scoreboard2"));
+            $('#instructions').dialog();
 		</script>
 	</body>
 </html>
