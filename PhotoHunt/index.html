@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
+    <title>PhotoHunt Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <header class="game-header">
+            <h1>PhotoHunt</h1>
+            <div class="game-info">
+                <div class="score-display">
+                    <span>Score: <span id="total-score">0</span></span>
+                </div>
+                <div class="round-info">
+                    <span>Round: <span id="current-round">1</span> / <span id="total-rounds">0</span></span>
+                </div>
+                <div class="timer-display">
+                    <span>Time: <span id="timer">60</span>s</span>
+                </div>
+                <div class="found-differences">
+                    <span>Found: <span id="found-count">0</span> / <span id="total-differences">0</span></span>
+                </div>
+                <div class="hints-display">
+                    <span>Hints:</span>
+                    <div class="hint-icons">
+                        <div class="hint-icon" id="hint-1" title="Use Hint (0 points)">🔍</div>
+                        <div class="hint-icon" id="hint-2" title="Use Hint (0 points)">🔍</div>
+                        <div class="hint-icon" id="hint-3" title="Use Hint (0 points)">🔍</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="game-main">
+            <div class="game-status" id="game-status">
+                <h2>Welcome to PhotoHunt!</h2>
+                <p>Find the differences between the two images. Click on the differences in either image.</p>
+                <p>Scoring: Each difference is worth the current time remaining (60pts at start, 59pts after 1s, etc.)</p>
+                <p><strong>Warning:</strong> Clicking outside a difference area will cost you 10 seconds!</p>
+                <p><strong>Hints:</strong> Use the 🔍 icons to reveal a random difference (3 hints per game). Unused hints are worth 50 points each at round end!</p>
+                <button id="start-button" class="start-btn">Start Game</button>
+            </div>
+
+            <div class="game-area" id="game-area" style="display: none;">
+                <div class="image-container">
+                    <div class="image-wrapper">
+                        <h3>Original</h3>
+                        <div class="image-holder">
+                            <img id="original-image" src="" alt="Original Image">
+                            <svg class="overlay" id="original-overlay"></svg>
+                        </div>
+                    </div>
+                    <div class="image-wrapper">
+                        <h3>Find the Differences</h3>
+                        <div class="image-holder">
+                            <img id="modified-image" src="" alt="Modified Image">
+                            <svg class="overlay" id="modified-overlay"></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="round-complete" id="round-complete" style="display: none;">
+                <h2 id="round-result-title">Round Complete!</h2>
+                <div id="round-result-content">
+                    <p>You found <span id="final-found-count">0</span> out of <span id="final-total-differences">0</span> differences!</p>
+                    <div id="score-breakdown">
+                        <p>Base Score: <span id="base-round-score">0</span> points</p>
+                        <p id="bonus-line" style="display: none;"></p>
+                        <p><strong>Round Total: <span id="round-score">0</span> points</strong></p>
+                    </div>
+                    <p>Game Total: <span id="round-total-score">0</span> points</p>
+                </div>
+                <div class="round-buttons">
+                    <button id="answer-key-button" class="answer-key-btn">View Answer Key</button>
+                    <button id="next-round-button" class="next-btn">Next Round</button>
+                </div>
+            </div>
+
+            <div class="answer-key-view" id="answer-key-view" style="display: none;">
+                <h2>Answer Key - Round <span id="answer-key-round">1</span></h2>
+                <p>All differences are highlighted below:</p>
+                
+                <div class="answer-key-container">
+                    <div class="answer-key-images">
+                        <div class="answer-image-wrapper">
+                            <h3>Original</h3>
+                            <div class="answer-image-holder">
+                                <img id="answer-original-image" src="" alt="Original Image">
+                                <svg class="overlay" id="answer-original-overlay"></svg>
+                            </div>
+                        </div>
+                        <div class="answer-image-wrapper">
+                            <h3>Modified</h3>
+                            <div class="answer-image-holder">
+                                <img id="answer-modified-image" src="" alt="Modified Image">
+                                <svg class="overlay" id="answer-modified-overlay"></svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="answer-key-legend">
+                        <div class="legend-item">
+                            <div class="legend-circle found-legend"></div>
+                            <span>Differences you found</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-circle hint-legend"></div>
+                            <span>Differences found with hints</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-circle missed-legend"></div>
+                            <span>Differences you missed</span>
+                        </div>
+                    </div>
+                    
+                    <div class="answer-key-controls">
+                        <button id="toggle-circles-button" class="toggle-circles-btn">Hide Circles</button>
+                    </div>
+                </div>
+                
+                <button id="back-to-results-button" class="back-btn">Back to Results</button>
+            </div>
+
+            <div class="game-complete" id="game-complete" style="display: none;">
+                <h2>Game Complete!</h2>
+                <p>Congratulations! You've completed all rounds.</p>
+                <p>Final Score: <span id="final-score">0</span> points</p>
+                <button id="play-again-button" class="play-again-btn">Play Again</button>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
