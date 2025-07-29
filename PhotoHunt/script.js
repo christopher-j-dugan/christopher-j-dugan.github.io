@@ -114,6 +114,153 @@ class PhotoHuntGame {
             "Game": {
                 "Rounds": [
                     {
+                        "image": "Drinks",
+                        "coords": [
+                            {
+                                "x": 1886,
+                                "y": 2244,
+                                "radius": 145
+                            },
+                            {
+                                "x": 2288,
+                                "y": 2554,
+                                "radius": 176
+                            },
+                            {
+                                "x": 2296,
+                                "y": 1963,
+                                "radius": 131
+                            },
+                            {
+                                "x": 3243,
+                                "y": 1825,
+                                "radius": 237
+                            },
+                            {
+                                "x": 1822,
+                                "y": 1202,
+                                "radius": 171
+                            },
+                            {
+                                "x": 2092,
+                                "y": 187,
+                                "radius": 548
+                            },
+                            {
+                                "x": 3343,
+                                "y": 1083,
+                                "radius": 102
+                            },
+                            {
+                                "x": 1872,
+                                "y": 850,
+                                "radius": 127
+                            }
+                        ]
+                    },
+                    {
+                        "image": "Kids",
+                        "time": 90,
+                        "coords": [
+                            {
+                                "x": 73,
+                                "y": 528,
+                                "radius": 148
+                            },
+                            {
+                                "x": 299,
+                                "y": 454,
+                                "radius": 87
+                            },
+                            {
+                                "x": 657,
+                                "y": 1411,
+                                "radius": 140
+                            },
+                            {
+                                "x": 915,
+                                "y": 847,
+                                "radius": 59
+                            },
+                            {
+                                "x": 990,
+                                "y": 516,
+                                "radius": 75
+                            },
+                            {
+                                "x": 1183,
+                                "y": 517,
+                                "radius": 87
+                            },
+                            {
+                                "x": 1478,
+                                "y": 1305,
+                                "radius": 144
+                            },
+                            {
+                                "x": 1725,
+                                "y": 1454,
+                                "radius": 89
+                            },
+                            {
+                                "x": 1693,
+                                "y": 324,
+                                "radius": 92
+                            }
+                        ]
+                    },
+                    {
+                        "image": "Smon",
+                        "time": 90,
+                        "coords": [
+                            {
+                                "x": 752,
+                                "y": 772,
+                                "radius": 206
+                            },
+                            {
+                                "x": 501,
+                                "y": 743,
+                                "radius": 48
+                            },
+                            {
+                                "x": 56,
+                                "y": 910,
+                                "radius": 172
+                            },
+                            {
+                                "x": 95,
+                                "y": 464,
+                                "radius": 75
+                            },
+                            {
+                                "x": 825,
+                                "y": 211,
+                                "radius": 51
+                            },
+                            {
+                                "x": 1157,
+                                "y": 337,
+                                "radius": 70
+                            },
+                            {
+                                "x": 1147,
+                                "y": 121,
+                                "radius": 49
+                            },
+                            {
+                                "x": 1450,
+                                "y": 69,
+                                "radius": 79
+                            },
+                            {
+                                "x": 1059,
+                                "y": 916,
+                                "radius": 98
+                            }
+                        ]
+                    },
+                    {
                         "image": "Jordan_Boat",
                         "time": 60,
                         "coords": [
@@ -639,21 +786,8 @@ class PhotoHuntGame {
     setupImageOverlay(imageType) {
         const img = this.elements[`${imageType}Image`];
         const overlay = this.elements[`${imageType}Overlay`];
-        const container = img.parentElement; // the .image-holder
         
-        // Get the actual position of the image within its container
-        const containerRect = container.getBoundingClientRect();
-        const imgRect = img.getBoundingClientRect();
-        
-        // Calculate offset of image relative to container
-        const offsetX = imgRect.left - containerRect.left;
-        const offsetY = imgRect.top - containerRect.top;
-        
-        // Position overlay to match the actual image
-        
-        // Position and size overlay to match the actual image
-        overlay.style.left = offsetX + 'px';
-        overlay.style.top = offsetY + 'px';
+        // Set overlay dimensions to match image (no manual positioning needed)
         overlay.style.width = img.offsetWidth + 'px';
         overlay.style.height = img.offsetHeight + 'px';
         
@@ -1092,6 +1226,10 @@ class PhotoHuntGame {
         // Reset circles visibility to visible
         this.circlesVisible = true;
         this.elements.toggleCirclesButton.textContent = 'Hide Circles';
+        
+        // Ensure overlays are actually visible
+        this.elements.answerOriginalOverlay.style.display = 'block';
+        this.elements.answerModifiedOverlay.style.display = 'block';
         
         // Reset any zoomed images
         this.elements.answerOriginalImage.classList.remove('zoomed');

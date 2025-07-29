@@ -27,7 +27,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 10px;
+    padding: 5px;
     overflow: hidden;
     -webkit-overflow-scrolling: touch;
     /* Prevent iOS bounce scrolling */
@@ -39,9 +39,9 @@ body {
     border-radius: 15px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    max-width: 1200px;
+    max-width: 1400px;
     width: 100%;
-    max-height: 95vh;
+    max-height: 98vh;
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
@@ -55,16 +55,16 @@ body {
 .game-header {
     background: linear-gradient(90deg, #4CAF50, #45a049);
     color: white;
-    padding: 20px;
+    padding: 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 10px;
 }
 
 .game-header h1 {
-    font-size: 2.5em;
+    font-size: 2.2em;
     font-weight: bold;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
@@ -80,7 +80,7 @@ body {
 
 .game-info > div {
     background: rgba(255, 255, 255, 0.2);
-    padding: 8px 15px;
+    padding: 6px 12px;
     border-radius: 20px;
     backdrop-filter: blur(10px);
 }
@@ -181,16 +181,26 @@ body {
 
 .answer-key-btn, .back-btn {
     background: #2196F3;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+    min-height: 44px;
 }
 
 .answer-key-btn:hover, .back-btn:hover {
     background: #1976D2;
+    transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
 }
 
 .game-main {
-    padding: 30px;
+    padding: 15px;
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
@@ -220,7 +230,7 @@ body {
 
 .image-container {
     display: flex;
-    gap: 30px;
+    gap: 20px;
     justify-content: center;
     align-items: flex-start;
     flex-wrap: wrap;
@@ -229,19 +239,10 @@ body {
 .image-wrapper {
     flex: 1;
     min-width: min(450px, 90vw);
-    max-width: 600px;
+    max-width: 700px;
 }
 
-.image-wrapper h3 {
-    text-align: center;
-    margin-bottom: 15px;
-    color: #333;
-    font-size: 1.4em;
-    padding: 10px;
-    background: #f8f9fa;
-    border-radius: 10px;
-    border: 2px solid #e9ecef;
-}
+/* Removed h3 headers to make room for larger images */
 
 .image-holder {
     position: relative;
@@ -255,7 +256,7 @@ body {
 .image-holder img {
     width: 100%;
     height: auto;
-    max-height: 70vh;
+    max-height: 85vh;
     display: block;
     cursor: crosshair;
     object-fit: contain;
@@ -343,7 +344,7 @@ body {
 }
 
 .answer-key-view {
-    padding: 30px;
+    padding: 15px;
     text-align: center;
     overflow: visible;
 }
@@ -370,7 +371,7 @@ body {
 
 .answer-key-images {
     display: flex;
-    gap: 30px;
+    gap: 20px;
     justify-content: center;
     align-items: flex-start;
     flex-wrap: wrap;
@@ -381,26 +382,11 @@ body {
 .answer-image-wrapper {
     flex: 1;
     min-width: 350px;
-    max-width: 450px;
+    max-width: 550px;
     overflow: visible;
 }
 
-.answer-image-wrapper h3 {
-    text-align: center;
-    margin-bottom: 15px;
-    color: #333;
-    font-size: 1.3em;
-    padding: 8px;
-    background: #e9ecef;
-    border-radius: 8px;
-}
-
-.answer-image-wrapper h3::after {
-    content: " (Tap to zoom)";
-    font-size: 0.8em;
-    color: #666;
-    font-weight: normal;
-}
+/* Removed h3 headers from answer key to make room for larger images */
 
 .answer-image-holder {
     position: relative;
@@ -419,7 +405,7 @@ body {
 .answer-image-holder img {
     width: 100%;
     height: auto;
-    max-height: 60vh;
+    max-height: 80vh;
     display: block;
     object-fit: contain;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -551,15 +537,15 @@ body {
     }
 }
 
-/* Tablet optimizations */
-@media (max-width: 1024px) and (min-width: 769px) {
+/* Large tablet optimizations */
+@media (max-width: 1024px) and (min-width: 900px) {
     .game-container {
         max-width: 95vw;
         max-height: 90vh;
     }
     
     .game-header h1 {
-        font-size: 1.4em;
+        font-size: 1.6em;
     }
     
     .game-header {
@@ -590,72 +576,178 @@ body {
     }
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
+/* Small tablet optimizations (Amazon Fire, small iPads) */
+@media (max-width: 899px) and (min-width: 600px) {
+    .game-container {
+        max-width: 98vw;
+        max-height: 95vh;
+    }
+    
+    .game-header {
+        padding: 8px 15px;
+        gap: 8px;
+    }
+    
+    .game-header h1 {
+        font-size: 1.2em;
+        margin: 0;
+    }
+    
+    .game-info {
+        gap: 8px;
+        font-size: 0.9em;
+    }
+    
+    .game-info > div {
+        padding: 4px 8px;
+        font-size: 0.9em;
+    }
+    
+    .hint-icon {
+        width: 28px;
+        height: 28px;
+        font-size: 14px;
+    }
+    
+    .image-wrapper {
+        min-width: min(320px, 90vw);
+        max-width: 400px;
+    }
+    
+    button {
+        min-height: 44px;
+        padding: 12px 20px;
+        font-size: 1em;
+    }
+}
+
+/* Mobile optimizations */
+@media (max-width: 599px) {
     body {
-        padding: 5px;
+        padding: 3px;
     }
     
     .game-header {
         flex-direction: column;
         text-align: center;
-        padding: 15px;
+        padding: 8px;
+        gap: 6px;
+    }
+    
+    .game-header h1 {
+        font-size: 1.4em;
+        margin-bottom: 5px;
     }
     
     .game-info {
         justify-content: center;
-        font-size: 1em;
+        font-size: 0.85em;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+    
+    .game-info > div {
+        padding: 3px 8px;
+        font-size: 0.85em;
     }
     
     .image-container {
         flex-direction: column;
-        gap: 20px;
+        gap: 15px;
     }
     
     .image-wrapper {
-        min-width: min(300px, 85vw);
+        min-width: min(280px, 90vw);
     }
     
-    .game-header h1 {
-        font-size: 2em;
-    }
-    
-    /* Larger touch targets for mobile */
     .hint-icon {
-        width: 36px;
-        height: 36px;
-        font-size: 18px;
-    }
-}
-
-@media (max-width: 480px) {
-    .game-main {
-        padding: 15px;
-    }
-    
-    .game-header {
-        padding: 10px;
-    }
-    
-    .game-info {
-        gap: 8px;
-    }
-    
-    .game-info > div {
-        font-size: 0.9em;
-        padding: 6px 12px;
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
     }
     
     button {
-        min-height: 44px;
-        font-size: 1em;
+        min-height: 40px;
+        padding: 10px 18px;
+        font-size: 0.95em;
     }
 }
 
-/* iPad specific optimizations */
-@media (max-width: 1024px) and (orientation: landscape) {
+/* Very small screens */
+@media (max-width: 480px) {
+    .game-main {
+        padding: 10px;
+    }
+    
+    .game-header {
+        padding: 6px;
+        gap: 4px;
+    }
+    
+    .game-header h1 {
+        font-size: 1.2em;
+        margin-bottom: 3px;
+    }
+    
+    .game-info {
+        gap: 4px;
+        font-size: 0.8em;
+    }
+    
+    .game-info > div {
+        font-size: 0.8em;
+        padding: 2px 6px;
+    }
+    
+    .hint-icon {
+        width: 26px;
+        height: 26px;
+        font-size: 14px;
+    }
+    
+    button {
+        min-height: 38px;
+        padding: 8px 15px;
+        font-size: 0.9em;
+    }
+}
+
+/* Small tablet landscape (Amazon Fire, etc.) */
+@media (max-width: 899px) and (min-width: 600px) and (orientation: landscape) {
+    .game-header {
+        padding: 6px 12px;
+        gap: 6px;
+    }
+    
+    .game-header h1 {
+        font-size: 1.1em;
+    }
+    
+    .game-info {
+        gap: 6px;
+        font-size: 0.85em;
+    }
+    
+    .game-info > div {
+        padding: 3px 6px;
+        font-size: 0.85em;
+    }
+    
+    .image-container {
+        flex-direction: row;
+        gap: 15px;
+    }
+    
+    .image-wrapper {
+        min-width: min(300px, 42vw);
+        max-width: 350px;
+    }
+}
+
+/* Large tablet specific optimizations */
+@media (max-width: 1024px) and (min-width: 900px) and (orientation: landscape) {
     .game-container {
-        max-height: 85vh;
+        max-height: 90vh;
     }
     
     .image-container {
@@ -667,7 +759,7 @@ body {
     }
 }
 
-@media (max-width: 1024px) and (orientation: portrait) {
+@media (max-width: 1024px) and (min-width: 900px) and (orientation: portrait) {
     .image-container {
         flex-direction: column;
     }
