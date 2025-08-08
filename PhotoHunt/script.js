@@ -170,6 +170,52 @@ class PhotoHuntGame {
                         ]
                     },
                     {
+                        "image": "Greg",
+                        "time": 60,
+                        "coords": [
+                            {
+                                "x": 356,
+                                "y": 1778,
+                                "radius": 275
+                            },
+                            {
+                                "x": 909,
+                                "y": 1772,
+                                "radius": 107
+                            },
+                            {
+                                "x": 898,
+                                "y": 986,
+                                "radius": 87
+                            },
+                            {
+                                "x": 1433,
+                                "y": 942,
+                                "radius": 85
+                            },
+                            {
+                                "x": 1352,
+                                "y": 267,
+                                "radius": 156
+                            },
+                            {
+                                "x": 794,
+                                "y": 733,
+                                "radius": 42
+                            },
+                            {
+                                "x": 426,
+                                "y": 784,
+                                "radius": 89
+                            },
+                            {
+                                "x": 1418,
+                                "y": 1446,
+                                "radius": 38
+                            }
+                        ]
+                    },
+                    {
                         "image": "outdoorgroup",
                         "time": 60,
                         "coords": [
