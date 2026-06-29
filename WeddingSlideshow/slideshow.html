@@ -2,7 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<!-- iOS: launch from "Add to Home Screen" with no Safari chrome (fullscreen-like) -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Our Slideshow" />
+<meta name="theme-color" content="#000000" />
 <title>Kelly and Chris — Wedding Slideshow</title>
 <style>
   :root { --accent: #1098BF; }
@@ -19,6 +25,7 @@
     position: relative;
     aspect-ratio: 800 / 600;
     width: min(100vw, calc(100vh * 800 / 600));
+    width: min(100vw, calc(100dvh * 800 / 600));   /* dynamic vh: fills better on mobile Safari */
     height: auto;
     background: #000;
     overflow: hidden;
@@ -85,7 +92,7 @@
   /* ---- Controls ---- */
   #controls {
     position: absolute; left: 0; right: 0; bottom: 0; z-index: 20;
-    padding: 10px 14px 12px;
+    padding: 10px 14px calc(12px + env(safe-area-inset-bottom, 0px));
     background: linear-gradient(transparent, rgba(0,0,0,.65));
     display: flex; align-items: center; gap: 12px;
     opacity: 0; transition: opacity .35s ease; pointer-events: none;
@@ -110,7 +117,7 @@
 
   /* Touch screens (phones/tablets): bigger, easier-to-hit targets */
   @media (pointer: coarse) {
-    #controls { gap: 6px; padding: 12px 10px 16px; flex-wrap: wrap; justify-content: center; }
+    #controls { gap: 6px; padding: 12px 10px calc(16px + env(safe-area-inset-bottom, 0px)); flex-wrap: wrap; justify-content: center; }
     #controls button { min-width: 48px; min-height: 48px; font-size: 23px; }
     #controls #fit { font-size: 16px; }
     #seek { height: 12px; min-width: 60px; }
@@ -311,6 +318,31 @@
     let raf = null, ended = false;
     function loop() { if (raf) cancelAnimationFrame(raf); raf = requestAnimationFrame(render); }
 
+    // Enter fullscreen (must be called from a user gesture, e.g. the Play tap)
+    function goFullscreen() {
+      const req = stage.requestFullscreen || stage.webkitRequestFullscreen || stage.msRequestFullscreen;
+      if (req) { try { const p = req.call(stage); if (p && p.catch) p.catch(() => {}); } catch (e) {} }
+    }
+    function exitFullscreen() {
+      const ex = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+      if (ex) { try { ex.call(document); } catch (e) {} }
+    }
+
+    // Keep the screen awake while the show plays (Android Chrome etc.)
+    let wakeLock = null;
+    async function requestWake() {
+      try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch (e) {}
+    }
+    async function releaseWake() {
+      try { if (wakeLock) { await wakeLock.release(); wakeLock = null; } } catch (e) {}
+    }
+    // The OS releases the lock when the tab is hidden — re-acquire when it returns
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && !audio.paused && !ended) requestWake();
+    });
+    audio.addEventListener('play', requestWake);
+    audio.addEventListener('pause', releaseWake);
+
     function startShow() {
       ended = false;
       endcard.classList.remove('show');
@@ -318,11 +350,14 @@
       setTimeout(() => { intro.style.display = 'none'; }, 1000);
       audio.currentTime = 0;
       audio.play();
+      goFullscreen();
+      requestWake();
       stage.classList.add('show-ui');
       loop();
     }
     function finish() {
       ended = true;
+      releaseWake();
       endcard.classList.add('show');
     }
 
@@ -360,8 +395,9 @@
       applyMode();
     });
     document.getElementById('fs').addEventListener('click', () => {
-      if (!document.fullscreenElement) stage.requestFullscreen?.();
-      else document.exitFullscreen?.();
+      const fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+      if (!fsEl) goFullscreen();
+      else exitFullscreen();
     });
 
     // auto-hide controls
@@ -383,7 +419,7 @@
       if (e.code === 'Space') { e.preventDefault(); audio.paused ? audio.play() : audio.pause(); }
       else if (e.code === 'ArrowRight') audio.currentTime = Math.min((audio.duration||1e9), audio.currentTime + 5);
       else if (e.code === 'ArrowLeft') audio.currentTime = Math.max(0, audio.currentTime - 5);
-      else if (e.key === 'f') stage.requestFullscreen?.();
+      else if (e.key === 'f') goFullscreen();
     });
 
     // reflect the default display mode in the UI
