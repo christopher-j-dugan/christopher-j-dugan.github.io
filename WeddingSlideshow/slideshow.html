@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>Kelly and Chris — Wedding Slideshow</title>
+<style>
+  :root { --accent: #1098BF; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #000; overflow: hidden; }
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #fff; -webkit-font-smoothing: antialiased;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* 4:3 stage, scaled to fit the viewport */
+  #stage {
+    position: relative;
+    aspect-ratio: 800 / 600;
+    width: min(100vw, calc(100vh * 800 / 600));
+    height: auto;
+    background: #000;
+    overflow: hidden;
+  }
+
+  .layer {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    will-change: opacity;
+  }
+  .layer img {
+    max-width: 100%; max-height: 100%;
+    width: auto; height: auto;
+    display: block;
+    transform-origin: center center;
+    will-change: transform;
+    -webkit-user-drag: none; user-select: none;
+  }
+  /* Fill mode: photo covers the whole 4:3 frame (edges cropped) */
+  #stage.fill .layer img {
+    width: 100%; height: 100%;
+    max-width: none; max-height: none;
+    object-fit: cover;
+  }
+
+  /* ---- Title / start overlay ---- */
+  #intro {
+    position: absolute; inset: 0; z-index: 30;
+    background: #000;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; gap: 14px;
+    transition: opacity 1s ease;
+  }
+  #intro h1 {
+    font-weight: 300; letter-spacing: .06em;
+    font-size: clamp(28px, 5vw, 52px);
+    color: var(--accent);
+  }
+  #intro .sub {
+    font-weight: 300; letter-spacing: .14em; text-transform: uppercase;
+    font-size: clamp(11px, 1.6vw, 17px); color: var(--accent); opacity: .85;
+  }
+  #intro .music { font-size: 12px; color: #888; margin-top: 6px; font-style: italic; }
+  #playBtn {
+    margin-top: 22px; cursor: pointer;
+    border: 1px solid var(--accent); color: var(--accent);
+    background: transparent; border-radius: 40px;
+    padding: 13px 30px; font-size: 15px; letter-spacing: .08em;
+    transition: background .25s, color .25s;
+  }
+  #playBtn:hover { background: var(--accent); color: #000; }
+
+  /* ---- Controls ---- */
+  #controls {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 20;
+    padding: 10px 14px 12px;
+    background: linear-gradient(transparent, rgba(0,0,0,.65));
+    display: flex; align-items: center; gap: 12px;
+    opacity: 0; transition: opacity .35s ease; pointer-events: none;
+    font-size: 13px;
+  }
+  #stage.show-ui #controls { opacity: 1; pointer-events: auto; }
+  #controls button {
+    background: none; border: none; color: #fff; cursor: pointer;
+    font-size: 17px; line-height: 1; opacity: .9;
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 36px; min-height: 36px; padding: 6px; border-radius: 6px;
+  }
+  #controls #fit { font-size: 13px; letter-spacing: .05em; }
+  #controls button:hover { opacity: 1; color: var(--accent); }
+  #seek {
+    flex: 1; height: 6px; border-radius: 3px;
+    background: rgba(255,255,255,.25); position: relative; cursor: pointer;
+  }
+  #seekFill { position: absolute; left: 0; top: 0; bottom: 0; width: 0;
+    background: var(--accent); border-radius: 3px; }
+  #time { font-variant-numeric: tabular-nums; color: #ccc; min-width: 86px; text-align: right; }
+
+  /* Touch screens (phones/tablets): bigger, easier-to-hit targets */
+  @media (pointer: coarse) {
+    #controls { gap: 6px; padding: 12px 10px 16px; flex-wrap: wrap; justify-content: center; }
+    #controls button { min-width: 48px; min-height: 48px; font-size: 23px; }
+    #controls #fit { font-size: 16px; }
+    #seek { height: 12px; min-width: 60px; }
+    #time { min-width: auto; font-size: 13px; }
+  }
+  #endcard {
+    position: absolute; inset: 0; z-index: 25; background: #000;
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    gap: 16px; opacity: 0; transition: opacity 1.2s ease; text-align: center;
+  }
+  #endcard.show { display: flex; opacity: 1; }
+  #endcard h2 { font-weight: 300; color: var(--accent); letter-spacing:.06em; font-size: clamp(24px,4vw,40px); }
+  #replayBtn {
+    cursor: pointer; border: 1px solid var(--accent); color: var(--accent);
+    background: transparent; border-radius: 40px; padding: 11px 26px; font-size: 14px;
+  }
+  #replayBtn:hover { background: var(--accent); color:#000; }
+</style>
+</head>
+<body>
+  <div id="stage">
+    <div class="layer" id="layerA"><img alt="" /></div>
+    <div class="layer" id="layerB"><img alt="" /></div>
+
+    <div id="endcard">
+      <h2 id="endTitle"></h2>
+      <button id="replayBtn">↻ Play again</button>
+    </div>
+
+    <div id="intro">
+      <h1 id="introTitle"></h1>
+      <div class="sub" id="introSub"></div>
+      <div class="music" id="introMusic"></div>
+      <button id="playBtn">▶ &nbsp;Play Slideshow</button>
+    </div>
+
+    <div id="controls">
+      <button id="pp" title="Play / Pause">❚❚</button>
+      <button id="prev" title="Previous photo">⏮</button>
+      <button id="next" title="Next photo">⏭</button>
+      <div id="seek"><div id="seekFill"></div></div>
+      <span id="time">0:00 / 0:00</span>
+      <button id="fit" title="Toggle Fit / Fill">Fit</button>
+      <button id="mute" title="Mute">🔊</button>
+      <button id="fs" title="Fullscreen">⤢</button>
+    </div>
+  </div>
+
+  <audio id="music" preload="auto" src="music.mp3"></audio>
+  <script src="slidedata.js"></script>
+  <script>
+  (function () {
+    const slides = SHOW.slides;
+    const meta = SHOW.meta;
+    const n = slides.length;
+
+    // ---- Build cumulative timeline (seconds) from per-slide durations ----
+    // Each photo holds for `dur`; the next photo crossfades in on top over `tran`.
+    const start = new Array(n);
+    let acc = 0;
+    for (let i = 0; i < n; i++) { start[i] = acc; acc += slides[i].dur; }
+    const showLen = acc;                       // total photo runtime
+    const DEFAULT_TRAN = 0.8;                   // crossfade for photos w/o explicit tran
+
+    // ---- Ken Burns parameters per slide ----
+    const MAX_PAN = 3.2;   // percent of frame
+    const ZOOM_LO = 1.00, ZOOM_HI = 1.085;
+    const kb = slides.map(s => {
+      let zFrom, zTo;
+      if (s.sScale && s.eScale) { zFrom = s.sScale / 100; zTo = s.eScale / 100; }
+      else if (s.zoom === 'out') { zFrom = ZOOM_HI; zTo = ZOOM_LO; }
+      else { zFrom = ZOOM_LO; zTo = ZOOM_HI; }   // 'in' or unspecified
+      const wx = s.wx || 0, wy = s.wy || 0;
+      // pan toward the weighted point over the slide's life
+      const panX = (wx / 50) * MAX_PAN;
+      const panY = (wy / 50) * MAX_PAN;
+      return { zFrom, zTo, panX, panY };
+    });
+
+    const smooth = p => p * p * (3 - 2 * p);     // smoothstep easing
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const tran = i => (slides[i].tran != null ? slides[i].tran : DEFAULT_TRAN);
+
+    // In fill mode the photo already covers the frame, so add a little overscan
+    // to the zoom so panning never reveals a black edge.
+    let fillMode = true;
+    function transformFor(i, p) {
+      const k = kb[i], pe = smooth(p);
+      const off = fillMode ? 0.06 : 0;
+      const s = lerp(k.zFrom + off, k.zTo + off, pe);
+      const x = lerp(0, k.panX, pe);
+      const y = lerp(0, k.panY, pe);
+      return `translate(${x.toFixed(3)}%, ${y.toFixed(3)}%) scale(${s.toFixed(4)})`;
+    }
+
+    // ---- DOM ----
+    const stage = document.getElementById('stage');
+    const layers = [document.getElementById('layerA'), document.getElementById('layerB')];
+    const imgs = layers.map(l => l.querySelector('img'));
+    const audio = document.getElementById('music');
+    const intro = document.getElementById('intro');
+    const endcard = document.getElementById('endcard');
+
+    document.getElementById('introTitle').textContent = meta.title || '';
+    document.getElementById('introSub').textContent = (meta.subtitle || '').replace(/\s+/g, ' ').trim();
+    document.getElementById('introMusic').textContent = meta.music_name ? '♪ ' + meta.music_name : '';
+    document.getElementById('endTitle').textContent = meta.title || '';
+
+    // top layer is the one currently fading/holding in front
+    let topIsA = true;
+    let curIndex = -1;
+    const loaded = {};
+
+    function preload(i) {
+      if (i < 0 || i >= n || loaded[i]) return;
+      const im = new Image();
+      im.src = slides[i].image;
+      loaded[i] = im;
+    }
+
+    function showIndex(i) {
+      // move previous "top" to back, bring new image to front
+      topIsA = !topIsA;
+      const topImg = topIsA ? imgs[0] : imgs[1];
+      topImg.src = slides[i].image;
+      curIndex = i;
+      // (z-order handled by DOM order + opacity in render)
+      for (let k = 1; k <= 3; k++) preload(i + k);
+    }
+
+    function render() {
+      const t = audio.currentTime;
+
+      // find primary slide: last one whose start <= t
+      let i = curIndex < 0 ? 0 : curIndex;
+      while (i + 1 < n && t >= start[i + 1]) i++;
+      while (i > 0 && t < start[i]) i--;
+      if (i !== curIndex) showIndex(i);
+
+      const topL = topIsA ? layers[0] : layers[1];
+      const botL = topIsA ? layers[1] : layers[0];
+      const topImg = topIsA ? imgs[0] : imgs[1];
+      const botImg = topIsA ? imgs[1] : imgs[0];
+
+      // top (current) slide progress + fade-in
+      const dur = slides[i].dur || 0.001;
+      const pTop = Math.min(1, Math.max(0, (t - start[i]) / dur));
+      const tr = tran(i);
+      const fade = (i === 0 || tr <= 0) ? 1 : Math.min(1, (t - start[i]) / tr);
+      topImg.style.transform = transformFor(i, pTop);
+      topL.style.opacity = fade;
+      topL.style.zIndex = 2;
+
+      // bottom (previous) slide: true crossfade — fades out as the new one
+      // fades in, then stays gone (so a shrinking/letterboxed photo never
+      // reveals the previous slide behind it).
+      if (i > 0 && fade < 1) {
+        const j = i - 1;
+        const pBot = Math.min(1, (t - start[j]) / (slides[j].dur || 0.001));
+        botImg.style.transform = transformFor(j, pBot);
+        botL.style.opacity = 1 - fade;
+        botL.style.zIndex = 1;
+      } else {
+        botL.style.opacity = 0;
+      }
+
+      updateUI(t);
+
+      if (!ended && t >= showLen - 0.05 && (audio.ended || t >= audio.duration - 0.05)) {
+        finish();
+      }
+      raf = requestAnimationFrame(render);
+    }
+
+    // ---- UI ----
+    const ppBtn = document.getElementById('pp');
+    const seek = document.getElementById('seek');
+    const seekFill = document.getElementById('seekFill');
+    const timeEl = document.getElementById('time');
+    const muteBtn = document.getElementById('mute');
+
+    const fmt = s => {
+      if (!isFinite(s)) s = 0;
+      const m = Math.floor(s / 60), sec = Math.floor(s % 60);
+      return m + ':' + String(sec).padStart(2, '0');
+    };
+    function updateUI(t) {
+      const dur = audio.duration || meta.music_dur / 1000;
+      seekFill.style.width = Math.min(100, (t / dur) * 100) + '%';
+      timeEl.textContent = fmt(t) + ' / ' + fmt(dur);
+      ppBtn.textContent = audio.paused ? '▶' : '❚❚';
+    }
+
+    let raf = null, ended = false;
+    function loop() { if (raf) cancelAnimationFrame(raf); raf = requestAnimationFrame(render); }
+
+    function startShow() {
+      ended = false;
+      endcard.classList.remove('show');
+      intro.style.opacity = 0;
+      setTimeout(() => { intro.style.display = 'none'; }, 1000);
+      audio.currentTime = 0;
+      audio.play();
+      stage.classList.add('show-ui');
+      loop();
+    }
+    function finish() {
+      ended = true;
+      endcard.classList.add('show');
+    }
+
+    document.getElementById('playBtn').addEventListener('click', startShow);
+    document.getElementById('replayBtn').addEventListener('click', startShow);
+
+    ppBtn.addEventListener('click', () => { audio.paused ? audio.play() : audio.pause(); });
+    document.getElementById('prev').addEventListener('click', () => {
+      audio.currentTime = Math.max(0, start[Math.max(0, (curIndex < 0 ? 0 : curIndex) - 1)]);
+    });
+    document.getElementById('next').addEventListener('click', () => {
+      audio.currentTime = start[Math.min(n - 1, (curIndex < 0 ? 0 : curIndex) + 1)];
+    });
+    seek.addEventListener('click', (e) => {
+      const r = seek.getBoundingClientRect();
+      const frac = (e.clientX - r.left) / r.width;
+      audio.currentTime = frac * (audio.duration || meta.music_dur / 1000);
+      if (ended) { ended = false; endcard.classList.remove('show'); audio.play(); }
+    });
+    muteBtn.addEventListener('click', () => {
+      audio.muted = !audio.muted;
+      muteBtn.textContent = audio.muted ? '🔇' : '🔊';
+    });
+    const fitBtn = document.getElementById('fit');
+    fitBtn.addEventListener('click', () => {
+      fillMode = !fillMode;
+      stage.classList.toggle('fill', fillMode);
+      fitBtn.textContent = fillMode ? 'Fill' : 'Fit';
+      // the rAF loop runs continuously after start and applies the change next frame
+    });
+    document.getElementById('fs').addEventListener('click', () => {
+      if (!document.fullscreenElement) stage.requestFullscreen?.();
+      else document.exitFullscreen?.();
+    });
+
+    // auto-hide controls
+    let hideT;
+    function poke() {
+      stage.classList.add('show-ui');
+      clearTimeout(hideT);
+      hideT = setTimeout(() => { if (!audio.paused) stage.classList.remove('show-ui'); }, 2600);
+    }
+    stage.addEventListener('mousemove', poke);
+    stage.addEventListener('click', (e) => {
+      if (e.target.closest('#controls') || e.target.closest('#intro') || e.target.closest('#endcard')) return;
+      audio.paused ? audio.play() : audio.pause();
+      poke();
+    });
+
+    // keyboard
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') { e.preventDefault(); audio.paused ? audio.play() : audio.pause(); }
+      else if (e.code === 'ArrowRight') audio.currentTime = Math.min((audio.duration||1e9), audio.currentTime + 5);
+      else if (e.code === 'ArrowLeft') audio.currentTime = Math.max(0, audio.currentTime - 5);
+      else if (e.key === 'f') stage.requestFullscreen?.();
+    });
+
+    // reflect the default fit mode in the UI
+    stage.classList.toggle('fill', fillMode);
+    fitBtn.textContent = fillMode ? 'Fill' : 'Fit';
+
+    // preload first few up front
+    preload(0); preload(1); preload(2);
+  })();
+  </script>
+</body>
+</html>
