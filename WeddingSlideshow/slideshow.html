@@ -30,6 +30,7 @@
     will-change: opacity;
   }
   .layer img {
+    position: relative; z-index: 1;   /* keep the sharp photo above the blurred backdrop */
     max-width: 100%; max-height: 100%;
     width: auto; height: auto;
     display: block;
@@ -43,6 +44,15 @@
     max-width: none; max-height: none;
     object-fit: cover;
   }
+  /* Blur-fill mode: whole photo (letterboxed) over a soft blurred copy of itself */
+  .layer .bg {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+    transform: scale(1.15);
+    filter: blur(22px) brightness(.55);
+    display: none;
+  }
+  #stage.blur .layer .bg { display: block; }
 
   /* ---- Title / start overlay ---- */
   #intro {
@@ -122,8 +132,8 @@
 </head>
 <body>
   <div id="stage">
-    <div class="layer" id="layerA"><img alt="" /></div>
-    <div class="layer" id="layerB"><img alt="" /></div>
+    <div class="layer" id="layerA"><div class="bg"></div><img alt="" /></div>
+    <div class="layer" id="layerB"><div class="bg"></div><img alt="" /></div>
 
     <div id="endcard">
       <h2 id="endTitle"></h2>
@@ -143,7 +153,7 @@
       <button id="next" title="Next photo">⏭</button>
       <div id="seek"><div id="seekFill"></div></div>
       <span id="time">0:00 / 0:00</span>
-      <button id="fit" title="Toggle Fit / Fill">Fit</button>
+      <button id="fit" title="Display: Fit / Fill / Blur">Fit</button>
       <button id="mute" title="Mute">🔊</button>
       <button id="fs" title="Fullscreen">⤢</button>
     </div>
@@ -184,12 +194,14 @@
     const lerp = (a, b, t) => a + (b - a) * t;
     const tran = i => (slides[i].tran != null ? slides[i].tran : DEFAULT_TRAN);
 
+    // Display mode: 'fit' (whole photo, letterbox), 'fill' (cover/crop),
+    // or 'blur' (whole photo over a blurred backdrop of itself).
     // In fill mode the photo already covers the frame, so add a little overscan
     // to the zoom so panning never reveals a black edge.
-    let fillMode = true;
+    let mode = 'fit';
     function transformFor(i, p) {
       const k = kb[i], pe = smooth(p);
-      const off = fillMode ? 0.06 : 0;
+      const off = mode === 'fill' ? 0.06 : 0;
       const s = lerp(k.zFrom + off, k.zTo + off, pe);
       const x = lerp(0, k.panX, pe);
       const y = lerp(0, k.panY, pe);
@@ -200,6 +212,7 @@
     const stage = document.getElementById('stage');
     const layers = [document.getElementById('layerA'), document.getElementById('layerB')];
     const imgs = layers.map(l => l.querySelector('img'));
+    const bgs = layers.map(l => l.querySelector('.bg'));
     const audio = document.getElementById('music');
     const intro = document.getElementById('intro');
     const endcard = document.getElementById('endcard');
@@ -224,8 +237,9 @@
     function showIndex(i) {
       // move previous "top" to back, bring new image to front
       topIsA = !topIsA;
-      const topImg = topIsA ? imgs[0] : imgs[1];
-      topImg.src = slides[i].image;
+      const ti = topIsA ? 0 : 1;
+      imgs[ti].src = slides[i].image;
+      bgs[ti].style.backgroundImage = 'url("' + slides[i].image + '")';
       curIndex = i;
       // (z-order handled by DOM order + opacity in render)
       for (let k = 1; k <= 3; k++) preload(i + k);
@@ -333,11 +347,17 @@
       muteBtn.textContent = audio.muted ? '🔇' : '🔊';
     });
     const fitBtn = document.getElementById('fit');
-    fitBtn.addEventListener('click', () => {
-      fillMode = !fillMode;
-      stage.classList.toggle('fill', fillMode);
-      fitBtn.textContent = fillMode ? 'Fill' : 'Fit';
+    const MODES = ['fit', 'fill', 'blur'];
+    const LABEL = { fit: 'Fit', fill: 'Fill', blur: 'Blur' };
+    function applyMode() {
+      stage.classList.remove('fill', 'blur');
+      if (mode !== 'fit') stage.classList.add(mode);
+      fitBtn.textContent = LABEL[mode];
       // the rAF loop runs continuously after start and applies the change next frame
+    }
+    fitBtn.addEventListener('click', () => {
+      mode = MODES[(MODES.indexOf(mode) + 1) % MODES.length];
+      applyMode();
     });
     document.getElementById('fs').addEventListener('click', () => {
       if (!document.fullscreenElement) stage.requestFullscreen?.();
@@ -366,9 +386,8 @@
       else if (e.key === 'f') stage.requestFullscreen?.();
     });
 
-    // reflect the default fit mode in the UI
-    stage.classList.toggle('fill', fillMode);
-    fitBtn.textContent = fillMode ? 'Fill' : 'Fit';
+    // reflect the default display mode in the UI
+    applyMode();
 
     // preload first few up front
     preload(0); preload(1); preload(2);
